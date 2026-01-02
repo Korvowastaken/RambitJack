@@ -1,19 +1,31 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import Card from './components/cards'
 import './App.css'
 
 function App() {
+  const [shuffledPick, setShuffledPick] = useState(Math.floor(Math.random() * 52))
+  const [prevPick, setPrevPick] = useState([shuffledPick])
 
-  const [count, setCount] = useState(0)
+
+
+  function shuffle() {
+
+    let genNum
+
+    do {
+      genNum = Math.floor(Math.random() * 52)
+      
+    } while (prevPick.includes(genNum))
+
+    setShuffledPick(genNum)
+    setPrevPick(prev => [...prev, genNum])
+    console.log(prevPick)
+  }
 
   return (
     <>
-      <h1>hello maybe black jack</h1>
-      <Card />
-
-      <button >hit me</button>
+      <Card pick={shuffledPick} />
+      <button onClick={shuffle}>hit me</button>
     </>
   )
 }
