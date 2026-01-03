@@ -35,6 +35,10 @@ function App() {
         setIsGameOver(true)
         return [newLow, newHigh]
       }
+      else if(newLow === 21 || newHigh === 21){
+        setIsGameOver(true)
+        return [newLow, newHigh]
+      }
       
       return [newLow, newHigh]
     })
@@ -64,12 +68,13 @@ function App() {
     <>
       <div className="score-display">
          Score: {handValues[1] <= 21 ? handValues[1] : handValues[0]} 
-        {isGameOver && <span> BUST!</span>}
+        {isGameOver && (handValues[0] > 21 && handValues[1]> 21) && <span> BUST!</span>}
+        {isGameOver && (handValues[0]===21 || handValues[1]===21) && <span> BLACKJACK!!</span>}
       </div>
       <div className="hand-container">
         {playerHand}
       </div>
-      <button onClick={shuffle} disabled={isGameOver}>hit me</button>
+      {!isGameOver && <button onClick={shuffle}>hit me</button>}
 
       {isGameOver && (
         <button onClick={() => {
