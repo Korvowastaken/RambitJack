@@ -3,6 +3,8 @@ import { useEffect } from "react";
 
 export default function Card({ pick = 0 }) {
 
+    
+
     const deck = [
         'A' , 'K' , `Q` , `J` , `10` , `9` , `8` , `7` , `6` , `5` , `4` , `3` , `2` ,
         'A' , 'K' , `Q` , `J` , `10` , `9` , `8` , `7` , `6` , `5` , `4` , `3` , `2` ,
