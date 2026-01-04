@@ -1,8 +1,10 @@
 import { useEffect } from "react";
 import { deck } from "../data/deck";
+import '../../public/jimbo.png'
 
 
 export default function Card({ pick = 0 }) {
+
 
     // 0-12 heart, 13-25 diamond , 26-38 spade, 39-51 club
 
@@ -23,12 +25,16 @@ export default function Card({ pick = 0 }) {
     return (
        <>
 
-        <div className="w-50 h-80 py-8 px-6 m-10 bg-white text-black rounded-lg border-2 border-black ">
-            <span className=" font-bold text-2xl mr-3">{deck[pick]}</span>
-            {(house=== 'heart')&& <span className="font-bold text-2xl">♥</span>}
-            {(house=== 'diamond')&& <span className="font-bold text-2xl">♦</span>}
-            {(house=== 'spades')&& <span className="font-bold text-2xl">♠</span>}
-            {(house=== 'club')&& <span className="font-bold text-2xl">♣</span>}
+        <div className="w-50 h-80 py-8 px-6 m-10 bg-white text-black rounded-lg border-2 border-black flex flex-col">
+            <div>
+                <span className=" font-bold text-4xl mr-3">{deck[pick]}</span>
+                {(house=== 'heart')&& <span className="font-bold text-4xl text-red-600">♥</span>}
+                {(house=== 'diamond')&& <span className="font-bold text-4xl text-red-600">♦</span>}
+                {(house=== 'spades')&& <span className="font-bold text-4xl">♠</span>}
+                {(house=== 'club')&& <span className="font-bold text-4xl">♣</span>}
+            </div>
+            {(pick===11)&& <img src="../../public/jimbo.png" alt="Jimbo" className="w-30 h-35 rounded-lg mt-8 self-center"/> }
+
         </div>
         
        </>
