@@ -71,7 +71,7 @@ function App() {
     <div className='bg-red-900 h-screen p-25'>
       <div className="flex justify-center text-3xl font-bold text-white">
          Score: {handValues[1] <= 21 ? handValues[1] : handValues[0]} 
-        {isGameOver && (handValues[0] > 21 && handValues[1]> 21) && <span className='text-red-900 ml-4'> BUST!</span>}
+        {isGameOver && (handValues[0] > 21 && handValues[1]> 21) && <span className='text-gray-900 ml-4'> BUST!</span>}
         {isGameOver && (handValues[0]===21 || handValues[1]===21) && <span className='text-yellow-300 ml-4'> BLACKJACK!!</span>}
       </div>
       
