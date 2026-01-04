@@ -9,10 +9,6 @@ function App() {
   const [playerHand, setPlayerHand] = useState([])
   const [isGameOver, setIsGameOver] = useState(false)
 
-  useEffect(() => {
-    setPlayerHand(prevPick.map(pick => <Card key={pick} pick={pick} />))
-  }, [prevPick])
-
   function getCardValue(cardNum) {
     const rank = cardNum % 13
     
@@ -40,6 +36,8 @@ function App() {
         return [newLow, newHigh]
       }
       
+     
+      
       return [newLow, newHigh]
     })
   }
@@ -58,6 +56,11 @@ function App() {
     setPrevPick(prev => [...prev, genNum])
   }
 
+  
+  useEffect(() => {
+    setPlayerHand(prevPick.map(pick => <Card key={pick} pick={pick} />))
+  }, [prevPick])
+
   useEffect(() => {
     if (handValues[0] > 21 && handValues[1] > 21) {
       setIsGameOver(true)
@@ -65,31 +68,36 @@ function App() {
   }, [handValues])
 
   return (
-    <>
-      <div className="score-display">
+    <div className='bg-green-600 h-screen p-25'>
+      <div className="flex justify-center text-3xl font-bold">
          Score: {handValues[1] <= 21 ? handValues[1] : handValues[0]} 
-        {isGameOver && (handValues[0] > 21 && handValues[1]> 21) && <span> BUST!</span>}
-        {isGameOver && (handValues[0]===21 || handValues[1]===21) && <span> BLACKJACK!!</span>}
+        {isGameOver && (handValues[0] > 21 && handValues[1]> 21) && <span className='text-red-900 ml-4'> BUST!</span>}
+        {isGameOver && (handValues[0]===21 || handValues[1]===21) && <span className='text-yellow-300 ml-4'> BLACKJACK!!</span>}
       </div>
       
-      <div className="hand-container">
+      <div className="flex justify-center">
         {playerHand}
       </div>
 
-      {!isGameOver && <button onClick={shuffle}>hit me</button>}
+      <div className='flex justify-center'>
 
-      {isGameOver && (
-        <button onClick={() => {
-          const initialCard = Math.floor(Math.random() * 52)
-          setPrevPick([initialCard])
-          const initialValue = getCardValue(initialCard)
-          setHandValues(initialValue)
-          setIsGameOver(false)
-        }}>
-          Play Again
-        </button>
-      )}
-    </>
+        {!isGameOver && <button onClick={shuffle} className='px-4 py-2 rounded bg-black text-white'>hit me</button>}
+
+        {isGameOver && (
+          <button onClick={() => {
+            const initialCard = Math.floor(Math.random() * 52)
+            setPrevPick([initialCard])
+            const initialValue = getCardValue(initialCard)
+            setHandValues(initialValue)
+            setIsGameOver(false)
+          }} className='px-4 py-2 rounded bg-black text-white'>
+            Play Again
+          </button>
+        )}
+
+      </div>
+
+    </div>
   )
 }
 

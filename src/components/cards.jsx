@@ -23,13 +23,12 @@ export default function Card({ pick = 0 }) {
     return (
        <>
 
-        <div className="w-50 h-80 p-8 m-10 bg-black text-white rounded-lg">
+        <div className="w-50 h-80 py-8 px-6 m-10 bg-white text-black rounded-lg border-2 border-black ">
             <span className=" font-bold text-2xl mr-3">{deck[pick]}</span>
             {(house=== 'heart')&& <span className="font-bold text-2xl">♥</span>}
             {(house=== 'diamond')&& <span className="font-bold text-2xl">♦</span>}
             {(house=== 'spades')&& <span className="font-bold text-2xl">♠</span>}
             {(house=== 'club')&& <span className="font-bold text-2xl">♣</span>}
-
         </div>
         
        </>
