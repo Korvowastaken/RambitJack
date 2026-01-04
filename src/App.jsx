@@ -71,9 +71,11 @@ function App() {
         {isGameOver && (handValues[0] > 21 && handValues[1]> 21) && <span> BUST!</span>}
         {isGameOver && (handValues[0]===21 || handValues[1]===21) && <span> BLACKJACK!!</span>}
       </div>
+      
       <div className="hand-container">
         {playerHand}
       </div>
+
       {!isGameOver && <button onClick={shuffle}>hit me</button>}
 
       {isGameOver && (

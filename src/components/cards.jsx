@@ -1,16 +1,8 @@
 import { useEffect } from "react";
+import { deck } from "../data/deck";
 
 
 export default function Card({ pick = 0 }) {
-
-    
-
-    const deck = [
-        'A' , '2' , `3` , `4` , `5` , `6` , `7` , `8` , `9` , `10` , `J` , `K` , `Q` ,
-        'A' , '2' , `3` , `4` , `5` , `6` , `7` , `8` , `9` , `10` , `J` , `K` , `Q` ,
-        'A' , '2' , `3` , `4` , `5` , `6` , `7` , `8` , `9` , `10` , `J` , `K` , `Q` ,
-        'A' , '2' , `3` , `4` , `5` , `6` , `7` , `8` , `9` , `10` , `J` , `K` , `Q` ,   
-    ]
 
     // 0-12 heart, 13-25 diamond , 26-38 spade, 39-51 club
 
@@ -30,7 +22,16 @@ export default function Card({ pick = 0 }) {
 
     return (
        <>
-        <h1>{deck[pick] ?? 'unknown'} of {house} </h1>
+
+        <div className="w-50 h-80 p-8 m-10 bg-black text-white rounded-lg">
+            <span className=" font-bold text-2xl mr-3">{deck[pick]}</span>
+            {(house=== 'heart')&& <span className="font-bold text-2xl">♥</span>}
+            {(house=== 'diamond')&& <span className="font-bold text-2xl">♦</span>}
+            {(house=== 'spades')&& <span className="font-bold text-2xl">♠</span>}
+            {(house=== 'club')&& <span className="font-bold text-2xl">♣</span>}
+
+        </div>
+        
        </>
     );
 }
