@@ -35,9 +35,7 @@ function App() {
         setIsGameOver(true)
         return [newLow, newHigh]
       }
-      
-     
-      
+       
       return [newLow, newHigh]
     })
   }

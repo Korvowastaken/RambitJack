@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import { deck } from "../data/deck";
-import '../../public/jimbo.png'
 
 
 export default function Card({ pick = 0 }) {
@@ -33,7 +32,7 @@ export default function Card({ pick = 0 }) {
                 {(house=== 'spades')&& <span className="font-bold text-4xl">♠</span>}
                 {(house=== 'club')&& <span className="font-bold text-4xl">♣</span>}
             </div>
-            {(pick===11)&& <img src="../../public/jimbo.png" alt="Jimbo" className="w-30 h-35 rounded-lg mt-8 self-center"/> }
+            {(pick===11) && <img src="/jimbo.png" alt="Jimbo" className="w-30 h-35 rounded-lg mt-8 self-center"/> }
 
         </div>
         
