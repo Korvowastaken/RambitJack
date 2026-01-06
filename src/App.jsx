@@ -80,7 +80,7 @@ function App() {
       
       <div>
         <div 
-          className="flex justify-center relative h-[500px]"
+          className="flex justify-center relative h-[450px]"
           style={{
             transform: `translateX(${- (playerHand.length*30)}px)`
           }}>
