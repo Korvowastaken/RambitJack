@@ -9,6 +9,8 @@ function App() {
   const [playerHand, setPlayerHand] = useState([])
   const [isGameOver, setIsGameOver] = useState(false)
 
+  const offset = 0
+
   function getCardValue(cardNum) {
     const rank = cardNum % 13
     
@@ -56,7 +58,9 @@ function App() {
 
   
   useEffect(() => {
-    setPlayerHand(prevPick.map(pick => <Card key={pick} pick={pick} />))
+    let zIndex = 0
+    setPlayerHand(prevPick.map(pick => <Card key={pick} pick={pick} zIndex={++zIndex} />))
+    
   }, [prevPick])
 
   useEffect(() => {
@@ -66,16 +70,22 @@ function App() {
   }, [handValues])
 
   return (
-    <div className='bg-red-900 h-screen p-25'>
+    <div className='bg-red-900 h-screen p-25 flex flex-col'>
+
       <div className="flex justify-center text-3xl font-bold text-white">
          Score: {handValues[1] <= 21 ? handValues[1] : handValues[0]} 
         {isGameOver && (handValues[0] > 21 && handValues[1]> 21) && <span className='text-gray-900 ml-4'> BUST!</span>}
         {isGameOver && (handValues[0]===21 || handValues[1]===21) && <span className='text-yellow-300 ml-4'> BLACKJACK!!</span>}
       </div>
       
-      <div className="flex justify-center">
+      <div 
+        className="flex justify-center relative"
+        style={{
+          transform: `translateX(${- (playerHand.length*30)}px)`
+        }}>
         {playerHand}
       </div>
+      
 
       <div className='flex justify-center'>
 
