@@ -6,7 +6,9 @@ function App() {
   
   const [prevPick, setPrevPick] = useState([Math.floor(Math.random() * 52)])
   const [handValues, setHandValues] = useState(getCardValue(prevPick))
+  const [dealerValues, setDealerValues] = useState([0,0])
   const [playerHand, setPlayerHand] = useState([])
+  const [dealerHand, setDealerHand] = useState([])
   const [isGameOver, setIsGameOver] = useState(false)
 
   const offset = 0
@@ -23,8 +25,10 @@ function App() {
     }
   }
 
-  function updateHandValues(newCardValue) {
-    setHandValues(prev => {
+  function updateHandValues(newCardValue , dealtTo) {
+
+    if(dealtTo === 'player'){
+      setHandValues(prev => {
 
       const newLow = prev[0] + newCardValue[0]
       const newHigh = prev[1] + newCardValue[1]
@@ -39,10 +43,30 @@ function App() {
       }
        
       return [newLow, newHigh]
-    })
+      })
+    }
+    else if(dealtTo === 'dealer'){
+      setDealerValues(prev => {
+
+      const newLow = prev[0] + newCardValue[0]
+      const newHigh = prev[1] + newCardValue[1]
+      
+      if (newLow > 21 && newHigh > 21) {
+        setIsGameOver(true)
+        return [newLow, newHigh]
+      }
+      else if(newLow === 21 || newHigh === 21){
+        setIsGameOver(true)
+        return [newLow, newHigh]
+      }
+       
+      return [newLow, newHigh]
+      })
+    }
+    
   }
 
-  function shuffle() {
+  function shuffle(dealtTo) {
 
     if (isGameOver) return 
 
@@ -51,9 +75,13 @@ function App() {
       genNum = Math.floor(Math.random() * 52)
     } while (prevPick.includes(genNum))
 
-    const newCardValue = getCardValue(genNum)
-    updateHandValues(newCardValue)
+    const newCardValue = getCardValue(genNum) 
+    updateHandValues(newCardValue , dealtTo)
     setPrevPick(prev => [...prev, genNum])
+  }
+
+  function dealer(){
+    console.log('standing')
   }
 
   
@@ -80,7 +108,7 @@ function App() {
       
       <div>
         <div 
-          className="flex justify-center relative h-[450px]"
+          className="flex justify-center relative h-112.5"
           style={{
             transform: `translateX(${- (playerHand.length*30)}px)`
           }}>
@@ -91,7 +119,8 @@ function App() {
 
       <div className='flex justify-center'>
 
-        {!isGameOver && <button onClick={shuffle} className='px-4 py-2 rounded bg-black text-white'>hit me</button>}
+        {!isGameOver && <button onClick={() => shuffle('player')} className='px-4 py-2 rounded bg-black text-white'>hit me</button>}
+        {!isGameOver && <button onClick={dealer} className='px-4 py-2 rounded bg-yellow-700 text-white'>stand</button>}
 
         {isGameOver && (
           <button onClick={() => {
