@@ -5,11 +5,12 @@ import './App.css'
 function App() {
   
   const [prevPick, setPrevPick] = useState([Math.floor(Math.random() * 52)])
-  const [handValues, setHandValues] = useState(getCardValue(prevPick))
+  const [handValues, setHandValues] = useState(getCardValue(prevPick[0]))
   const [dealerValues, setDealerValues] = useState([0,0])
   const [playerHand, setPlayerHand] = useState([])
   const [dealerHand, setDealerHand] = useState([])
   const [isGameOver, setIsGameOver] = useState(false)
+  const [isDealerTur, setIsDealerTurn] = useState(false)
 
   const offset = 0
 
@@ -81,7 +82,12 @@ function App() {
   }
 
   function dealer(){
-    console.log('standing')
+    setIsDealerTurn(true)
+
+    useEffect(()=>{
+      
+
+    },[])
   }
 
   
