@@ -4,18 +4,37 @@ import './App.css'
 
 function App() {
   
-  const [prevPick, setPrevPick] = useState([Math.floor(Math.random() * 52)])
-  const [handValues, setHandValues] = useState(getCardValue(prevPick[0]))
-  const [dealerValues, setDealerValues] = useState([0,0])
-  const [playerHand, setPlayerHand] = useState([])
-  const [dealerHand, setDealerHand] = useState([])
+  // const [playerPicks, setPlayerPicks] = useState([Math.floor(Math.random() * 52)])
+  // const [dealerPicks, setDealerPicks] = useState([])
+  // const [prevPick, setPrevPick] = useState(playerPicks[0])
+  // const [handValues, setHandValues] = useState(getCardValue(prevPick[0]))
+  // const [dealerValues, setDealerValues] = useState([0,0])
+  // const [playerHand, setPlayerHand] = useState([])
+  // const [dealerHand, setDealerHand] = useState([])
+  // const [isGameOver, setIsGameOver] = useState(false)
+  // const [isDealerTurn, setIsDealerTurn] = useState(false)
+
+  const [usedCards, setUsedCards] = useState([])
+  const [dealerPicks , setDealerPicks] = useState([])
+  const [playerPicks , setPlayerPicks] = useState([])
+
+
+  const [playerValues , setPlayerValues] = useState([0,0])
+  const [dealerValues , setDealerValues] = useState([0,0])
+
+
   const [isGameOver, setIsGameOver] = useState(false)
-  const [isDealerTur, setIsDealerTurn] = useState(false)
+  // const [isGameStart, setIsGameStart] = useState(false)
+  const [isDealerTurn, setIsDealerTurn] = useState(false)
+
+
+
+
 
   const offset = 0
 
-  function getCardValue(cardNum) {
-    const rank = cardNum % 13
+  function getCardValue(genNum) {
+    const rank = genNum % 13
     
     if (rank === 0) {
       return [1, 11] 
@@ -29,7 +48,7 @@ function App() {
   function updateHandValues(newCardValue , dealtTo) {
 
     if(dealtTo === 'player'){
-      setHandValues(prev => {
+      setPlayerValues(prev => {
 
       const newLow = prev[0] + newCardValue[0]
       const newHigh = prev[1] + newCardValue[1]
@@ -46,6 +65,7 @@ function App() {
       return [newLow, newHigh]
       })
     }
+
     else if(dealtTo === 'dealer'){
       setDealerValues(prev => {
 
@@ -74,67 +94,96 @@ function App() {
     let genNum
     do {
       genNum = Math.floor(Math.random() * 52)
-    } while (prevPick.includes(genNum))
+    } while (usedCards.includes(genNum))
 
-    const newCardValue = getCardValue(genNum) 
+    const newCardValue = getCardValue(genNum)
     updateHandValues(newCardValue , dealtTo)
-    setPrevPick(prev => [...prev, genNum])
+
+     if(dealtTo==='player'){
+      setPlayerPicks(prev => [...prev, genNum])
+    }
+    else{
+      setDealerPicks(prev => [...prev, genNum])
+    }
+    setUsedCards(prev => [...prev, genNum])
   }
 
-  function dealer(){
-    setIsDealerTurn(true)
+  function gameStarted(){
+    shuffle('player')
+  }
 
-    useEffect(()=>{
+  useEffect(() => {
+    if (isDealerTurn && !isGameOver) {
+      const dealerTurn = () => {
+        const dealerScore = dealerValues[1] <= 21 ? dealerValues[1] : dealerValues[0]
+        
+        // Check if dealer should draw another card
+        if (dealerScore < 17 && dealerScore < 21) {
+          // Draw a card after a delay
+          setTimeout(() => {
+            shuffle('dealer')
+            
+            // Recursively call dealerTurn to check if another card is needed
+            dealerTurn()
+          }, 1000) // 1 second delay for visual effect
+        } else {
+          // Dealer stands - game over
+          setIsGameOver(true)
+        }
+      }
       
-
-    },[])
-  }
-
-  
-  useEffect(() => {
-    let zIndex = 0
-    setPlayerHand(prevPick.map(pick => <Card key={pick} pick={pick} zIndex={++zIndex} />))
-    
-  }, [prevPick])
+      // Start dealer's turn
+      dealerTurn()
+    }
+  }, [isDealerTurn, isGameOver])
 
   useEffect(() => {
-    if (handValues[0] > 21 && handValues[1] > 21) {
+    if (playerValues[0] > 21 && playerValues[1] > 21) {
       setIsGameOver(true)
     }
-  }, [handValues])
+  }, [playerValues])
 
   return (
     <div className='bg-red-900 h-screen p-25 flex flex-col'>
 
       <div className="flex flex-col justify-center items-center text-3xl font-bold text-white">
-         <p className='mb-2'>Score: {handValues[1] <= 21 ? handValues[1] : handValues[0]} </p>
-        {isGameOver && (handValues[0] > 21 && handValues[1]> 21) && <p className='text-gray-900 ml-4'> BUST!</p>}
-        {isGameOver && (handValues[0]===21 || handValues[1]===21) && <p className='text-yellow-300 ml-4'> BLACKJACK!!</p>}
+         <p className='mb-2'>Score: {playerValues[1] <= 21 ? playerValues[1] : playerValues[0]} </p>
+        {isGameOver && (playerValues[0] > 21 && playerValues[1]> 21) && <p className='text-gray-900 ml-4'> BUST!</p>}
+        {isGameOver && (playerValues[0]===21 || playerValues[1]===21) && <p className='text-yellow-300 ml-4'> BLACKJACK!!</p>}
       </div>
       
       <div>
         <div 
           className="flex justify-center relative h-112.5"
           style={{
-            transform: `translateX(${- (playerHand.length*30)}px)`
+            transform: `translateX(${- (playerPicks.length * 30)}px)`
           }}>
-          {playerHand}
+          {playerPicks.map((pick, index) => (
+            <Card key={pick} pick={pick} zIndex={index + 1} />
+          ))}
         </div>
       </div>
       
 
       <div className='flex justify-center'>
 
-        {!isGameOver && <button onClick={() => shuffle('player')} className='px-4 py-2 rounded bg-black text-white'>hit me</button>}
-        {!isGameOver && <button onClick={dealer} className='px-4 py-2 rounded bg-yellow-700 text-white'>stand</button>}
+        {!isGameOver && <button onClick={gameStarted} className='px-4 py-2 rounded bg-black text-white'>hit me</button>}
+        {!isGameOver && <button onClick={() => setIsDealerTurn(true)} className='px-4 py-2 rounded bg-yellow-700 text-white'>stand</button>}
 
         {isGameOver && (
           <button onClick={() => {
+
+            console.log('game over')
             const initialCard = Math.floor(Math.random() * 52)
-            setPrevPick([initialCard])
             const initialValue = getCardValue(initialCard)
-            setHandValues(initialValue)
+            setUsedCards([initialCard])
+            setPlayerPicks([initialCard])
+            setDealerPicks([])
             setIsGameOver(false)
+            setIsDealerTurn(false)
+            setPlayerValues(initialValue)
+            setDealerValues([0,0])
+
           }} className='px-4 py-2 rounded bg-black text-white'>
             Play Again
           </button>
