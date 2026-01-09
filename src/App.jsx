@@ -3,16 +3,6 @@ import Card from './components/cards'
 import './App.css'
 
 function App() {
-  
-  // const [playerPicks, setPlayerPicks] = useState([Math.floor(Math.random() * 52)])
-  // const [dealerPicks, setDealerPicks] = useState([])
-  // const [prevPick, setPrevPick] = useState(playerPicks[0])
-  // const [handValues, setHandValues] = useState(getCardValue(prevPick[0]))
-  // const [dealerValues, setDealerValues] = useState([0,0])
-  // const [playerHand, setPlayerHand] = useState([])
-  // const [dealerHand, setDealerHand] = useState([])
-  // const [isGameOver, setIsGameOver] = useState(false)
-  // const [isDealerTurn, setIsDealerTurn] = useState(false)
 
   const [usedCards, setUsedCards] = useState([])
   const [dealerPicks , setDealerPicks] = useState([])
@@ -24,12 +14,8 @@ function App() {
 
 
   const [isGameOver, setIsGameOver] = useState(false)
-  // const [isGameStart, setIsGameStart] = useState(false)
   const [isDealerTurn, setIsDealerTurn] = useState(false)
-
-
-
-
+  
 
   const offset = 0
 
@@ -73,11 +59,11 @@ function App() {
       const newHigh = prev[1] + newCardValue[1]
       
       if (newLow > 21 && newHigh > 21) {
-        setIsGameOver(true)
+        
         return [newLow, newHigh]
       }
       else if(newLow === 21 || newHigh === 21){
-        setIsGameOver(true)
+  
         return [newLow, newHigh]
       }
        
@@ -88,6 +74,7 @@ function App() {
   }
 
   function shuffle(dealtTo) {
+
 
     if (isGameOver) return 
 
@@ -106,36 +93,36 @@ function App() {
       setDealerPicks(prev => [...prev, genNum])
     }
     setUsedCards(prev => [...prev, genNum])
+    console.log(`usercards: ${usedCards}`)
   }
 
-  function gameStarted(){
-    shuffle('player')
-  }
-
-  useEffect(() => {
+    useEffect(() => {
     if (isDealerTurn && !isGameOver) {
       const dealerTurn = () => {
         const dealerScore = dealerValues[1] <= 21 ? dealerValues[1] : dealerValues[0]
+        const playerScore = playerValues[10] <= 21 ? playerValues[1] : playerValues[0]
         
-        // Check if dealer should draw another card
-        if (dealerScore < 17 && dealerScore < 21) {
-          // Draw a card after a delay
-          setTimeout(() => {
+        if (dealerScore < 17) {
+          setTimeout(()=>{
             shuffle('dealer')
-            
-            // Recursively call dealerTurn to check if another card is needed
-            dealerTurn()
-          }, 1000) // 1 second delay for visual effect
-        } else {
-          // Dealer stands - game over
+            console.log(dealerScore)
+
+          },1000)
+
+        }
+        else if(dealerScore > 21){
           setIsGameOver(true)
         }
+        else if(dealerScore > playerScore){
+          setIsGameOver(true)
+        }
+        
+
       }
       
-      // Start dealer's turn
       dealerTurn()
     }
-  }, [isDealerTurn, isGameOver])
+  }, [isDealerTurn, isGameOver , dealerValues])
 
   useEffect(() => {
     if (playerValues[0] > 21 && playerValues[1] > 21) {
@@ -167,7 +154,7 @@ function App() {
 
       <div className='flex justify-center'>
 
-        {!isGameOver && <button onClick={gameStarted} className='px-4 py-2 rounded bg-black text-white'>hit me</button>}
+        {!isGameOver && <button onClick={() => shuffle('player')} className='px-4 py-2 rounded bg-black text-white'>hit me</button>}
         {!isGameOver && <button onClick={() => setIsDealerTurn(true)} className='px-4 py-2 rounded bg-yellow-700 text-white'>stand</button>}
 
         {isGameOver && (
