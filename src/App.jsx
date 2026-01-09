@@ -15,6 +15,8 @@ function App() {
 
   const [isGameOver, setIsGameOver] = useState(false)
   const [isDealerTurn, setIsDealerTurn] = useState(false)
+  const [dealerWon, setDealerWon] = useState(false)
+  const [playerWon, setPlayerWon] = useState(false)
   
 
   const offset = 0
@@ -63,7 +65,7 @@ function App() {
         return [newLow, newHigh]
       }
       else if(newLow === 21 || newHigh === 21){
-  
+        setDealerWon(true)
         return [newLow, newHigh]
       }
        
@@ -96,33 +98,45 @@ function App() {
     console.log(`usercards: ${usedCards}`)
   }
 
-    useEffect(() => {
+  useEffect(() => {
     if (isDealerTurn && !isGameOver) {
-      const dealerTurn = () => {
-        const dealerScore = dealerValues[1] <= 21 ? dealerValues[1] : dealerValues[0]
-        const playerScore = playerValues[10] <= 21 ? playerValues[1] : playerValues[0]
-        
-        if (dealerScore < 17) {
-          setTimeout(()=>{
-            shuffle('dealer')
-            console.log(dealerScore)
-
-          },1000)
-
-        }
-        else if(dealerScore > 21){
-          setIsGameOver(true)
-        }
-        else if(dealerScore > playerScore){
-          setIsGameOver(true)
-        }
-        
-
-      }
+      const dealerScore = dealerValues[1] <= 21 ? dealerValues[1] : dealerValues[0]
+      const playerScore = playerValues[1] <= 21 ? playerValues[1] : playerValues[0]
       
-      dealerTurn()
+      console.log(`Dealer=${dealerScore}, Player=${playerScore}`)
+      
+      if (dealerScore <= 17 && dealerScore <= 21) {
+        setTimeout(() => {
+          shuffle('dealer')
+        }, 2000)
+      } else {
+        if (dealerScore > 21) {
+          setPlayerWon(true)
+        }
+        if ((dealerScore > playerScore) && (dealerScore <= 21)) {
+          setDealerWon(true)
+        }
+        if (playerScore > dealerScore) {
+          setPlayerWon(true)
+        }
+        if (playerScore === dealerScore){
+          console.log('Draw')
+        }
+        setIsGameOver(true)
+      }
     }
-  }, [isDealerTurn, isGameOver , dealerValues])
+  }, [isDealerTurn, isGameOver, dealerValues, playerValues])
+
+  useEffect(()=>{
+
+    if(dealerWon){
+      console.log('dealer won')
+    }
+    if(playerWon){
+      console.log('player won')
+    }
+
+  },[dealerWon, playerWon])
 
   useEffect(() => {
     if (playerValues[0] > 21 && playerValues[1] > 21) {
