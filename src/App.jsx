@@ -103,8 +103,6 @@ function App() {
       const dealerScore = dealerValues[1] <= 21 ? dealerValues[1] : dealerValues[0]
       const playerScore = playerValues[1] <= 21 ? playerValues[1] : playerValues[0]
       
-      console.log(`Dealer=${dealerScore}, Player=${playerScore}`)
-      
       if (dealerScore <= 17 && dealerScore <= 21) {
         setTimeout(() => {
           shuffle('dealer')
@@ -145,17 +143,18 @@ function App() {
   }, [playerValues])
 
   return (
-    <div className='bg-red-900 h-screen p-25 flex flex-col'>
+    <div className='bg-red-900 min-h-screen  py-4 flex flex-col'>
 
-      <div className="flex flex-col justify-center items-center text-3xl font-bold text-white">
-         <p className='mb-2'>Score: {playerValues[1] <= 21 ? playerValues[1] : playerValues[0]} </p>
-        {isGameOver && (playerValues[0] > 21 && playerValues[1]> 21) && <p className='text-gray-900 ml-4'> BUST!</p>}
-        {isGameOver && (playerValues[0]===21 || playerValues[1]===21) && <p className='text-yellow-300 ml-4'> BLACKJACK!!</p>}
+      <div className="flex flex-col justify-center items-center text-1.5xl font-bold text-white ">
+         <p className='mb-2'>PLAYER SCORE:</p>
+         <p className='text-2xl'>  {playerValues[1] <= 21 ? playerValues[1] : playerValues[0]} </p>
+        {isGameOver && (playerValues[0] > 21 && playerValues[1]> 21) && <p className='text-gray-900'>BUST!</p>}
+        {isGameOver && (playerValues[0]===21 || playerValues[1]===21) && <p className='text-yellow-300'>BLACKJACK!!</p>}
       </div>
       
       <div>
         <div 
-          className="flex justify-center relative h-112.5"
+          className="flex justify-center relative h-60"
           style={{
             transform: `translateX(${- (playerPicks.length * 30)}px)`
           }}>
@@ -164,6 +163,26 @@ function App() {
           ))}
         </div>
       </div>
+
+      
+
+      {isDealerTurn && <div>
+
+        <div className='flex flex-col justify-center items-center text-1xl font-bold text-white'>
+          <p >DEALER SCORE</p> 
+          <p> {dealerValues[1] <= 21 ? dealerValues[1] : dealerValues[0]} </p>
+        </div>
+
+        <div 
+          className="flex justify-center relative h-60"
+          style={{
+            transform: `translateX(${- (dealerPicks.length * 30)}px)`
+          }}>
+          {dealerPicks.map((pick, index) => (
+            <Card key={pick} pick={pick} zIndex={index + 1} />
+          ))}
+        </div>
+      </div>}
       
 
       <div className='flex justify-center'>
