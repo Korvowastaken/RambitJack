@@ -46,7 +46,7 @@ function App() {
         return [newLow, newHigh]
       }
       else if(newLow === 21 || newHigh === 21){
-        setIsGameOver(true)
+        setIsDealerTurn(true)
         return [newLow, newHigh]
       }
        
@@ -95,7 +95,7 @@ function App() {
       setDealerPicks(prev => [...prev, genNum])
     }
     setUsedCards(prev => [...prev, genNum])
-    console.log(`usercards: ${usedCards}`)
+    
   }
 
   useEffect(() => {
@@ -103,38 +103,30 @@ function App() {
       const dealerScore = dealerValues[1] <= 21 ? dealerValues[1] : dealerValues[0]
       const playerScore = playerValues[1] <= 21 ? playerValues[1] : playerValues[0]
       
-      if (dealerScore <= 17 && dealerScore <= 21) {
-        setTimeout(() => {
-          shuffle('dealer')
-        }, 2000)
-      } else {
-        if (dealerScore > 21) {
-          setPlayerWon(true)
+      setTimeout(()=>{
+        if (dealerScore <= 17 && dealerScore <= 21) {
+        
+            shuffle('dealer')
+          
+        } 
+        else {
+          if (dealerScore > 21) {
+            setPlayerWon(true)
+          }
+          if ((dealerScore > playerScore) && (dealerScore <= 21)) {
+            setDealerWon(true)
+          }
+          if (playerScore > dealerScore) {
+            setPlayerWon(true)
+          }
+          if (playerScore === dealerScore){
+            console.log('Draw')
+          }
+          setIsGameOver(true)
         }
-        if ((dealerScore > playerScore) && (dealerScore <= 21)) {
-          setDealerWon(true)
-        }
-        if (playerScore > dealerScore) {
-          setPlayerWon(true)
-        }
-        if (playerScore === dealerScore){
-          console.log('Draw')
-        }
-        setIsGameOver(true)
-      }
+      },2000)
     }
   }, [isDealerTurn, isGameOver, dealerValues, playerValues])
-
-  useEffect(()=>{
-
-    if(dealerWon){
-      console.log('dealer won')
-    }
-    if(playerWon){
-      console.log('player won')
-    }
-
-  },[dealerWon, playerWon])
 
   useEffect(() => {
     if (playerValues[0] > 21 && playerValues[1] > 21) {
@@ -145,14 +137,14 @@ function App() {
   return (
     <div className='bg-red-900 min-h-screen  py-4 flex flex-col'>
 
-      {playerWon && <p className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-sky-300 z-200'> PLAYER WONNNNNNN !! </p> }
-      {dealerWon && <p className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-sky-300 z-200'> HOUSE WON!</p>}
+      {playerWon && <p className='absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-amber-300 text-amber-50 font-bold text-center w-auto z-200 px-24 py-4 rounded-2xl'> PLAYER WONNNNN !! </p> }
+      {dealerWon && <p className='absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-rose-600 text-amber-50 font-bold text-center w-auto z-200 px-24 py-4 rounded-2xl'> HOUSE WON!</p>}
 
       <div className="flex flex-col justify-center items-center text-1.5xl font-bold text-white ">
          <p className='mb-2'>PLAYER SCORE:</p>
          <p className='text-2xl'>  {playerValues[1] <= 21 ? playerValues[1] : playerValues[0]} </p>
-        {isGameOver && (playerValues[0] > 21 && playerValues[1]> 21) && <p className='text-gray-900'>BUST!</p>}
-        {isGameOver && (playerValues[0]===21 || playerValues[1]===21) && <p className='text-yellow-300'>BLACKJACK!!</p>}
+        {(playerValues[0] > 21 && playerValues[1]> 21) && <p className='text-gray-900'>BUST!</p>}
+        {(playerValues[0]===21 || playerValues[1]===21) && <p className='text-yellow-300'>BLACKJACK!!</p>}
       </div>
       
       <div>
@@ -195,8 +187,6 @@ function App() {
 
         {isGameOver && (
           <button onClick={() => {
-
-            console.log('game over')
             const initialCard = Math.floor(Math.random() * 52)
             const initialValue = getCardValue(initialCard)
             setUsedCards([initialCard])
