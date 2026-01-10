@@ -145,6 +145,9 @@ function App() {
   return (
     <div className='bg-red-900 min-h-screen  py-4 flex flex-col'>
 
+      {playerWon && <p className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-sky-300 z-200'> PLAYER WONNNNNNN !! </p> }
+      {dealerWon && <p className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-sky-300 z-200'> HOUSE WON!</p>}
+
       <div className="flex flex-col justify-center items-center text-1.5xl font-bold text-white ">
          <p className='mb-2'>PLAYER SCORE:</p>
          <p className='text-2xl'>  {playerValues[1] <= 21 ? playerValues[1] : playerValues[0]} </p>
@@ -203,6 +206,8 @@ function App() {
             setIsDealerTurn(false)
             setPlayerValues(initialValue)
             setDealerValues([0,0])
+            setPlayerWon(false)
+            setDealerWon(false)
 
           }} className='px-4 py-2 rounded bg-black text-white'>
             Play Again
