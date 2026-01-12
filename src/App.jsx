@@ -191,7 +191,7 @@ function App() {
           </div>
 
           <div 
-            className="flex justify-center relative h-40 mb-8"
+            className="flex justify-center relative h-30 mb-8"
             style={{
               transform: `translateX(${- ((playerPicks.length + 1) * 25)}px)`
             }}>
