@@ -17,6 +17,7 @@ function App() {
   const [isDealerTurn, setIsDealerTurn] = useState(false)
   const [dealerWon, setDealerWon] = useState(false)
   const [playerWon, setPlayerWon] = useState(false)
+  const [startGame, setStartGame] = useState(false)
   
 
   const [gamesPlayed, setGamesPlayed] = useState(() => {
@@ -28,6 +29,21 @@ function App() {
     const saved = localStorage.getItem('playerWins');
     return saved ? parseInt(saved) : 0;
   });
+  
+  const startNewGame = () => {
+    const initialCard = Math.floor(Math.random() * 52)
+    const initialValue = getCardValue(initialCard)
+    setUsedCards([initialCard])
+    setPlayerPicks([initialCard])
+    setDealerPicks([])
+    setIsGameOver(false)
+    setIsDealerTurn(false)
+    setPlayerValues(initialValue)
+    setDealerValues([0,0])
+    setPlayerWon(false)
+    setDealerWon(false)
+    setStartGame(true)
+  }
 
 
   function getCardValue(genNum) {
@@ -157,7 +173,7 @@ function App() {
   return (
     <div className='bg-red-900 min-h-screen  py-4 flex flex-col items-center justify-around '>
 
-      {!(gamesPlayed===0) && <p className='absolute top-2 left-2'>winrate: {(playerWins/gamesPlayed)*100}%</p>}
+      {!(gamesPlayed===0) && <p className='absolute top-2 left-2 font-bold text-amber-400 text-xs'>winrate: {(playerWins/gamesPlayed)*100}%</p>}
 
       {playerWon && <p className='absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-amber-300 text-amber-50 font-bold text-center w-auto z-200 px-24 py-4 rounded-2xl'> PLAYER WONNNNN !! </p> }
       {dealerWon && <p className='absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-rose-600 text-amber-50 font-bold text-center w-auto z-200 px-24 py-4 rounded-2xl'> HOUSE WON!</p>}
@@ -175,7 +191,7 @@ function App() {
           </div>
 
           <div 
-            className="flex justify-center relative h-60"
+            className="flex justify-center relative h-40 mb-8"
             style={{
               transform: `translateX(${- ((playerPicks.length + 1) * 25)}px)`
             }}>
@@ -189,13 +205,13 @@ function App() {
 
         {isDealerTurn && <div>
 
-          <div className='flex flex-col justify-center items-center mb-12 text-1.5xl font-bold text-white'>
+          <div className='flex flex-col justify-center items-center mb-12 text-1.5xl font-bold max-h-1/3 text-white'>
             <p>DEALER SCORE</p> 
             <p> {dealerValues[1] <= 21 ? dealerValues[1] : dealerValues[0]} </p>
           </div>
 
           <div 
-            className="flex justify-center relative h-60"
+            className="flex justify-center relative h-30"
             style={{
               transform: `translateX(${- ((dealerPicks.length + 1) * 25)}px)`
             }}>
@@ -208,33 +224,38 @@ function App() {
       
 
       <div className='flex w-3xs justify-evenly align-self-center'>
-
-        {!isDealerTurn && !isGameOver && <button onClick={() => {
-          (gamesPlayed === 0) ? setGamesPlayed(1) :
-          shuffle('player')
-        }} className='px-4 py-2 rounded bg-black text-white'>hit me</button>}
-        {!isDealerTurn && !isGameOver && <button onClick={() => setIsDealerTurn(true)} className='px-4 py-2 rounded bg-yellow-700 text-white'>stand</button>}
-
-        {isGameOver && (
-          <button onClick={() => {
-            setGamesPlayed(prev => prev + 1)
-            const initialCard = Math.floor(Math.random() * 52)
-            const initialValue = getCardValue(initialCard)
-            setUsedCards([initialCard])
-            setPlayerPicks([initialCard])
-            setDealerPicks([])
-            setIsGameOver(false)
-            setIsDealerTurn(false)
-            setPlayerValues(initialValue)
-            setDealerValues([0,0])
-            setPlayerWon(false)
-            setDealerWon(false)
-
-          }} className='px-4 py-2 rounded bg-black text-white'>
-            Play Again
+        {!startGame ? (
+          <button onClick={startNewGame} className='px-4 py-2 rounded bg-green-700 text-white'>
+            Start Game
           </button>
+        ) : (
+          <>
+            {!isDealerTurn && !isGameOver && (
+              <>
+                <button 
+                  onClick={() => shuffle('player')} 
+                  className='px-4 py-2 rounded bg-black text-white'>
+                  Hit Me
+                </button>
+                <button 
+                  onClick={() => setIsDealerTurn(true)} 
+                  className='px-4 py-2 rounded bg-yellow-700 text-white'>
+                  Stand
+                </button>
+              </>
+            )}
+            {isGameOver && (
+              <button 
+                onClick={() => {
+                  setGamesPlayed(prev => prev + 1)
+                  startNewGame()
+                }} 
+                className='px-4 py-2 rounded bg-black text-white'>
+                Play Again
+              </button>
+            )}
+          </>
         )}
-
       </div>
 
     </div>
