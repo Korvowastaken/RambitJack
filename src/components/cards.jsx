@@ -22,8 +22,8 @@ export default function Card({ pick = 0 , zIndex }) {
                 xl:w-36 xl:h-50 
                 2xl:w-40 2xl:h-54 2xl:px-4 2xl:py-2
             ">
-            <div className="flex items-start">
-                <span className="font-bold text-sm px-2">{deck[pick]}</span>
+            <div className="flex p-1 text-xs lg:text-lg">
+                <span className="font-bold mr-1">{deck[pick]}</span>
                 {(pick >= 0 && pick <= 12) && <span className="font-bold text-red-600">♥</span>}
                 {(pick >= 13 && pick <= 25) && <span className="font-bold text-red-600">♦</span>}
                 {(pick >= 26 && pick <= 38) && <span className="font-bold">♠</span>}

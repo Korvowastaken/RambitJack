@@ -19,7 +19,16 @@ function App() {
   const [playerWon, setPlayerWon] = useState(false)
   
 
-  const offset = 0
+  const [gamesPlayed, setGamesPlayed] = useState(() => {
+    const saved = localStorage.getItem('gamesPlayed');
+    return saved ? parseInt(saved) : 0;
+  });
+  
+  const [playerWins, setPlayerWins] = useState(() => {
+    const saved = localStorage.getItem('playerWins');
+    return saved ? parseInt(saved) : 0;
+  });
+
 
   function getCardValue(genNum) {
     const rank = genNum % 13
@@ -99,6 +108,14 @@ function App() {
   }
 
   useEffect(() => {
+    localStorage.setItem('gamesPlayed', gamesPlayed);
+  }, [gamesPlayed]);
+
+  useEffect(() => {
+    localStorage.setItem('playerWins', playerWins);
+  }, [playerWins]);
+
+  useEffect(() => {
     if (isDealerTurn && !isGameOver) {
       const dealerScore = dealerValues[1] <= 21 ? dealerValues[1] : dealerValues[0]
       const playerScore = playerValues[1] <= 21 ? playerValues[1] : playerValues[0]
@@ -112,11 +129,14 @@ function App() {
         else {
           if (dealerScore > 21) {
             setPlayerWon(true)
+            setPlayerWins(prev => prev + 1)
+            
           }
           if ((dealerScore > playerScore) && (dealerScore <= 21)) {
             setDealerWon(true)
           }
           if (playerScore > dealerScore) {
+            setPlayerWins(prev => prev + 1)
             setPlayerWon(true)
           }
           if (playerScore === dealerScore){
@@ -136,6 +156,8 @@ function App() {
 
   return (
     <div className='bg-red-900 min-h-screen  py-4 flex flex-col items-center justify-around '>
+
+      {!(gamesPlayed===0) && <p className='absolute top-2 left-2'>winrate: {(playerWins/gamesPlayed)*100}%</p>}
 
       {playerWon && <p className='absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-amber-300 text-amber-50 font-bold text-center w-auto z-200 px-24 py-4 rounded-2xl'> PLAYER WONNNNN !! </p> }
       {dealerWon && <p className='absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-rose-600 text-amber-50 font-bold text-center w-auto z-200 px-24 py-4 rounded-2xl'> HOUSE WON!</p>}
@@ -187,11 +209,15 @@ function App() {
 
       <div className='flex w-3xs justify-evenly align-self-center'>
 
-        {!isDealerTurn && !isGameOver && <button onClick={() => shuffle('player')} className='px-4 py-2 rounded bg-black text-white'>hit me</button>}
+        {!isDealerTurn && !isGameOver && <button onClick={() => {
+          (gamesPlayed === 0) ? setGamesPlayed(1) :
+          shuffle('player')
+        }} className='px-4 py-2 rounded bg-black text-white'>hit me</button>}
         {!isDealerTurn && !isGameOver && <button onClick={() => setIsDealerTurn(true)} className='px-4 py-2 rounded bg-yellow-700 text-white'>stand</button>}
 
         {isGameOver && (
           <button onClick={() => {
+            setGamesPlayed(prev => prev + 1)
             const initialCard = Math.floor(Math.random() * 52)
             const initialValue = getCardValue(initialCard)
             setUsedCards([initialCard])
