@@ -14,13 +14,20 @@ export default function Card({ pick = 0 , zIndex }) {
                 zIndex,
                 transform: `translateX(${offset}px)`
             }}
-            className="absolute bg-white text-black rounded-lg border-2 border-black flex flex-col w-25 min-w-25 h-40 py-2 px-2 m-10 sm:w-50 sm:min-w-50 sm:h-80">
-            <div>
-                <span className=" font-bold  text -x1 mr-1 sm:text-4xl sm:mr-2 ">{deck[pick]}</span>
-                {(pick >= 0 && pick <= 12) && <span className="font-bold sm:text-4xl text-red-600">♥</span>}
-                {(pick >= 13 && pick <= 25) && <span className="font-bold sm:text-4xl text-red-600">♦</span>}
-                {(pick >= 26 && pick <= 38) && <span className="font-bold sm:text-4xl">♠</span>}
-                {(pick >= 39 && pick <= 51) && <span className="font-bold sm:text-4xl">♣</span>}
+            className="absolute bg-white text-black rounded-lg border-2 border-black flex flex-col
+                w-20 h-28 
+                sm:w-25 sm:h-40 
+                md:w-28 md:h-42 
+                lg:w-32 lg:h-48 
+                xl:w-36 xl:h-50 
+                2xl:w-40 2xl:h-54 2xl:px-4 2xl:py-2
+            ">
+            <div className="flex items-start">
+                <span className="font-bold text-sm px-2">{deck[pick]}</span>
+                {(pick >= 0 && pick <= 12) && <span className="font-bold text-red-600">♥</span>}
+                {(pick >= 13 && pick <= 25) && <span className="font-bold text-red-600">♦</span>}
+                {(pick >= 26 && pick <= 38) && <span className="font-bold">♠</span>}
+                {(pick >= 39 && pick <= 51) && <span className="font-bold">♣</span>}
             </div>
             {(pick===11) && <img src="/jimbo.png" alt="Jimbo" className="w-15 h-20 rounded-lg mt-4 self-center"/> }
 

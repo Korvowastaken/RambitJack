@@ -135,55 +135,60 @@ function App() {
   }, [playerValues])
 
   return (
-    <div className='bg-red-900 min-h-screen  py-4 flex flex-col'>
+    <div className='bg-red-900 min-h-screen  py-4 flex flex-col items-center justify-around '>
 
       {playerWon && <p className='absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-amber-300 text-amber-50 font-bold text-center w-auto z-200 px-24 py-4 rounded-2xl'> PLAYER WONNNNN !! </p> }
       {dealerWon && <p className='absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-rose-600 text-amber-50 font-bold text-center w-auto z-200 px-24 py-4 rounded-2xl'> HOUSE WON!</p>}
 
-      <div className="flex flex-col justify-center items-center text-1.5xl font-bold text-white ">
-         <p className='mb-2'>PLAYER SCORE:</p>
-         <p className='text-2xl'>  {playerValues[1] <= 21 ? playerValues[1] : playerValues[0]} </p>
-        {(playerValues[0] > 21 && playerValues[1]> 21) && <p className='text-gray-900'>BUST!</p>}
-        {(playerValues[0]===21 || playerValues[1]===21) && <p className='text-yellow-300'>BLACKJACK!!</p>}
+      
+      
+      <div className='xl:flex xl:flex-row xl:justify-around xl:items-center min-w-screen'>
+
+        <div>
+          <div className="flex flex-col justify-center items-center mb-12 text-1.5xl font-bold text-white ">
+            <p className='mb-2'>PLAYER SCORE:</p>
+            <p className='text-2xl'>  {playerValues[1] <= 21 ? playerValues[1] : playerValues[0]} </p>
+            {(playerValues[0] > 21 && playerValues[1]> 21) && <p className='text-gray-900'>BUST!</p>}
+            {(playerValues[0]===21 || playerValues[1]===21) && <p className='text-yellow-300'>BLACKJACK!!</p>}
+          </div>
+
+          <div 
+            className="flex justify-center relative h-60"
+            style={{
+              transform: `translateX(${- ((playerPicks.length + 1) * 25)}px)`
+            }}>
+            {playerPicks.map((pick, index) => (
+              <Card key={pick} pick={pick} zIndex={index + 1} />
+            ))}
+          </div>
+        </div>
+
+        
+
+        {isDealerTurn && <div>
+
+          <div className='flex flex-col justify-center items-center mb-12 text-1.5xl font-bold text-white'>
+            <p>DEALER SCORE</p> 
+            <p> {dealerValues[1] <= 21 ? dealerValues[1] : dealerValues[0]} </p>
+          </div>
+
+          <div 
+            className="flex justify-center relative h-60"
+            style={{
+              transform: `translateX(${- ((dealerPicks.length + 1) * 25)}px)`
+            }}>
+            {dealerPicks.map((pick, index) => (
+              <Card key={pick} pick={pick} zIndex={index + 1} />
+            ))}
+          </div>
+        </div>}
       </div>
       
-      <div>
-        <div 
-          className="flex justify-center relative h-60"
-          style={{
-            transform: `translateX(${- (playerPicks.length * 30)}px)`
-          }}>
-          {playerPicks.map((pick, index) => (
-            <Card key={pick} pick={pick} zIndex={index + 1} />
-          ))}
-        </div>
-      </div>
 
-      
+      <div className='flex w-3xs justify-evenly align-self-center'>
 
-      {isDealerTurn && <div>
-
-        <div className='flex flex-col justify-center items-center text-1xl font-bold text-white'>
-          <p >DEALER SCORE</p> 
-          <p> {dealerValues[1] <= 21 ? dealerValues[1] : dealerValues[0]} </p>
-        </div>
-
-        <div 
-          className="flex justify-center relative h-60"
-          style={{
-            transform: `translateX(${- (dealerPicks.length * 30)}px)`
-          }}>
-          {dealerPicks.map((pick, index) => (
-            <Card key={pick} pick={pick} zIndex={index + 1} />
-          ))}
-        </div>
-      </div>}
-      
-
-      <div className='flex justify-center'>
-
-        {!isDealerTurn &&  <button onClick={() => shuffle('player')} className='px-4 py-2 rounded bg-black text-white'>hit me</button>}
-        {!isDealerTurn && <button onClick={() => setIsDealerTurn(true)} className='px-4 py-2 rounded bg-yellow-700 text-white'>stand</button>}
+        {!isDealerTurn && !isGameOver && <button onClick={() => shuffle('player')} className='px-4 py-2 rounded bg-black text-white'>hit me</button>}
+        {!isDealerTurn && !isGameOver && <button onClick={() => setIsDealerTurn(true)} className='px-4 py-2 rounded bg-yellow-700 text-white'>stand</button>}
 
         {isGameOver && (
           <button onClick={() => {
