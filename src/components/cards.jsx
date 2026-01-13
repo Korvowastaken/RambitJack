@@ -29,7 +29,7 @@ export default function Card({ pick = 0 , zIndex }) {
                 {(pick >= 26 && pick <= 38) && <span className="font-bold">♠</span>}
                 {(pick >= 39 && pick <= 51) && <span className="font-bold">♣</span>}
             </div>
-            {(pick===11) && <img src="/jimbo.png" alt="Jimbo" className="w-15 h-20 rounded-lg mt-4 self-center"/> }
+            {(pick===11) && <img src="/jimbo.png" alt="Jimbo" className="w-12 h-15 sm:h-20 sm:h sm:w-15 lg:h-35 lg:w-28 rounded-lg mt-4 self-center"/> }
 
         </div>
         

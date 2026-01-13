@@ -17,6 +17,7 @@ function App() {
   const [isDealerTurn, setIsDealerTurn] = useState(false)
   const [dealerWon, setDealerWon] = useState(false)
   const [playerWon, setPlayerWon] = useState(false)
+  const [draw , setDraw] = useState(false)
   const [startGame, setStartGame] = useState(false)
   
 
@@ -41,6 +42,7 @@ function App() {
     setPlayerValues(initialValue)
     setDealerValues([0,0])
     setPlayerWon(false)
+    setDraw(false)
     setDealerWon(false)
     setStartGame(true)
   }
@@ -156,7 +158,7 @@ function App() {
             setPlayerWon(true)
           }
           if (playerScore === dealerScore){
-            console.log('Draw')
+            setDraw(true)
           }
           setIsGameOver(true)
         }
@@ -171,27 +173,22 @@ function App() {
   }, [playerValues])
 
   return (
-    <div className='bg-red-900 min-h-screen  py-4 flex flex-col items-center justify-around '>
+    <div className='bg-[#2A5D40] min-h-screen  py-4 flex flex-col items-center justify-around '>
 
-      {!(gamesPlayed===0) && <p className='absolute top-2 left-2 font-bold text-amber-400 text-xs'>winrate: {(playerWins/gamesPlayed)*100}%</p>}
-
-      {playerWon && <p className='absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-amber-300 text-amber-50 font-bold text-center w-auto z-200 px-24 py-4 rounded-2xl'> PLAYER WONNNNN !! </p> }
-      {dealerWon && <p className='absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-rose-600 text-amber-50 font-bold text-center w-auto z-200 px-24 py-4 rounded-2xl'> HOUSE WON!</p>}
-
+      {(isDealerTurn) && <p className='absolute top-2 left-2 font-bold text-amber-400 text-xs'>winrate: { Math.floor((playerWins/gamesPlayed)*100)}%</p>}      
       
-      
-      <div className='xl:flex xl:flex-row xl:justify-around xl:items-center min-w-screen'>
+      <div className='xl:flex xl:flex-row xl:justify-center xl:gap-[10vw] xl:items-center xl:w-[70vw]'>
 
-        <div>
-          <div className="flex flex-col justify-center items-center mb-12 text-1.5xl font-bold text-white ">
-            <p className='mb-2'>PLAYER SCORE:</p>
+        <div className='flex flex-col items-center justify-center'>
+          <div className="flex flex-col justify-center items-center mb-6 text-1.5xl font-bold text-white ">
+            <p className='mb-2'>PLAYER SCORE</p>
             <p className='text-2xl'>  {playerValues[1] <= 21 ? playerValues[1] : playerValues[0]} </p>
             {(playerValues[0] > 21 && playerValues[1]> 21) && <p className='text-gray-900'>BUST!</p>}
             {(playerValues[0]===21 || playerValues[1]===21) && <p className='text-yellow-300'>BLACKJACK!!</p>}
           </div>
 
           <div 
-            className="flex justify-center relative h-30 mb-8"
+            className="flex justify-center relative h-30 sm:h-45 mb-8"
             style={{
               transform: `translateX(${- ((playerPicks.length + 1) * 25)}px)`
             }}>
@@ -202,16 +199,22 @@ function App() {
         </div>
 
         
+      {playerWon && <p className=' text-black font-extrabold text-center w-auto z-200 px-24 py-4 rounded-2xl bg-amber-200 max-w-[80vw] '> PLAYER WONNNNN !! </p> }
+      {dealerWon && <p className=' text-black font-extrabold text-center w-auto z-200 px-24 py-4 rounded-2xl bg-amber-200 max-w-[80vw] '> HOUSE WON!</p>}
+      {draw && <p className=' text-black font-extrabold text-center w-auto z-200 px-24 py-4 rounded-2xl bg-amber-200 max-w-[80vw] ' >DRAW</p>}
 
-        {isDealerTurn && <div>
+        
 
-          <div className='flex flex-col justify-center items-center mb-12 text-1.5xl font-bold max-h-1/3 text-white'>
-            <p>DEALER SCORE</p> 
-            <p> {dealerValues[1] <= 21 ? dealerValues[1] : dealerValues[0]} </p>
+        {isDealerTurn && <div className='flex flex-col-reverse lg:flex-col lg:mb-8 items-center justify-center'>
+
+          <div className="flex flex-col-reverse lg:flex-col justify-center items-center font-bold text-white mt-6 lg:mt-0">
+            <p className='mt-2 lg:mt-0 lg:mb-2'>DEALER SCORE</p>
+            <p className='text-2xl'>  {dealerValues[1] <= 21 ? dealerValues[1] : dealerValues[0]} </p>
+
           </div>
 
           <div 
-            className="flex justify-center relative h-30"
+            className="flex justify-center relative h-30 sm:h-45 mt-8"
             style={{
               transform: `translateX(${- ((dealerPicks.length + 1) * 25)}px)`
             }}>
