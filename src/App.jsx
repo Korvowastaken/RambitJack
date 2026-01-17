@@ -199,7 +199,7 @@ function App() {
         </div>
 
         
-      {playerWon && <p className=' text-black font-extrabold text-center w-auto z-200 px-24 py-4 rounded-2xl bg-amber-200 max-w-[80vw] '> PLAYER WONNNNN !! </p> }
+      {playerWon && <p className=' text-black font-extrabold text-center w-auto z-200 px-24 py-4 rounded-2xl bg-amber-200 max-w-[80vw] '> PLAYER WON!! </p> }
       {dealerWon && <p className=' text-black font-extrabold text-center w-auto z-200 px-24 py-4 rounded-2xl bg-amber-200 max-w-[80vw] '> HOUSE WON!</p>}
       {draw && <p className=' text-black font-extrabold text-center w-auto z-200 px-24 py-4 rounded-2xl bg-amber-200 max-w-[80vw] ' >DRAW</p>}
 
