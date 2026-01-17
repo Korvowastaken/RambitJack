@@ -175,7 +175,7 @@ function App() {
   return (
     <div className='bg-[#2A5D40] min-h-screen  py-4 flex flex-col items-center justify-around '>
 
-      {(isDealerTurn) && <p className='absolute top-2 left-2 font-bold text-amber-400 text-xs'>winrate: { Math.floor((playerWins/gamesPlayed)*100)}%</p>}      
+      {(isDealerTurn) && <p className='absolute top-2 left-2 bg-[#1c4a30] rounded-2xl px-3 py-0.5 font-mono font-bold text-amber-400 text-xs sm:text-sm'>winrate: { Math.floor((playerWins/gamesPlayed)*100)}%</p>}      
       
       <div className='xl:flex xl:flex-row xl:justify-center xl:gap-[10vw] xl:items-center xl:w-[70vw]'>
 
