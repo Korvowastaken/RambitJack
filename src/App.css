@@ -2,6 +2,7 @@
 
 /* animations use the individual translate/rotate/scale properties so they stack with inline transforms */
 @theme {
+  --font-pixel: "Pixelify Sans", ui-monospace, monospace;
   --animate-sway: sway 3s ease-in-out infinite alternate;
   --animate-pop: pop 300ms cubic-bezier(0.2, 2, 0.4, 1);
   --animate-shake: shake 400ms ease-in-out;

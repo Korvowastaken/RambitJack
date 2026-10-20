@@ -17,6 +17,12 @@ export function drawCard(used) {
   return card
 }
 
+// standard: stand on 17+. hard mode: also keep drawing while behind the player (ties stand)
+export function dealerShouldHit(dealer, player, hard = false) {
+  const d = handScore(dealer)
+  return d < 17 || (hard && d < handScore(player))
+}
+
 // 'player' | 'dealer' | 'draw'
 export function outcome(player, dealer) {
   const p = handScore(player)

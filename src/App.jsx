@@ -1,9 +1,14 @@
 import { useState, useEffect } from 'react'
 import Card, { CardBack, cardSize } from './components/cards'
-import { handScore, isBlackjack, drawCard, outcome } from './game'
+import { handScore, isBlackjack, drawCard, outcome, dealerShouldHit } from './game'
+import { sfx, setMuted } from './sound'
 import './App.css'
 
 const resultText = { player: 'PLAYER WON!!', dealer: 'HOUSE WON!', draw: 'DRAW' }
+const resultStyle = { player: 'bg-amber-300 text-black', dealer: 'bg-red-700 text-white', draw: 'bg-slate-600 text-white' }
+
+// chunky Balatro-style button: dark lip underneath that it presses down into
+const button = 'font-pixel text-xl sm:text-2xl text-white px-6 py-2 rounded-xl shadow-[0_5px_0_rgba(0,0,0,0.4)] text-shadow-[0_2px_0_rgba(0,0,0,0.35)] hover:brightness-110 hover:-translate-y-0.5 active:translate-y-1 active:shadow-none transition-[translate,filter,box-shadow] duration-100'
 
 function App() {
 
@@ -24,6 +29,9 @@ function App() {
     return saved ? parseInt(saved) : 0;
   });
 
+  const [hardMode, setHardMode] = useState(() => localStorage.getItem('hardMode') === 'true')
+  const [soundOn, setSoundOn] = useState(() => localStorage.getItem('soundOn') !== 'false')
+
   const holeCardHidden = phase === 'player'
   const playerScore = handScore(playerPicks)
   const dealerScore = handScore(holeCardHidden ? dealerPicks.slice(0, 1) : dealerPicks)
@@ -43,7 +51,14 @@ function App() {
     const picks = [...playerPicks, drawCard([...playerPicks, ...dealerPicks])]
     setPlayerPicks(picks)
     // bust or 21 ends the player's turn; the dealer effect settles the result
-    if (handScore(picks) >= 21) setPhase('dealer')
+    if (handScore(picks) > 21) sfx.lose()
+    if (handScore(picks) >= 21) stand()
+  }
+
+  // ending the player's turn reveals the hole card
+  const stand = () => {
+    setPhase('dealer')
+    sfx.flip()
   }
 
   useEffect(() => {
@@ -55,19 +70,31 @@ function App() {
   }, [playerWins]);
 
   useEffect(() => {
+    localStorage.setItem('hardMode', hardMode);
+  }, [hardMode]);
+
+  useEffect(() => {
+    setMuted(!soundOn)
+    localStorage.setItem('soundOn', soundOn);
+  }, [soundOn]);
+
+  useEffect(() => {
     if (phase !== 'dealer') return
     const id = setTimeout(() => {
       const playerDone = handScore(playerPicks) > 21 || isBlackjack(playerPicks)
-      if (!playerDone && handScore(dealerPicks) < 17) {
+      if (!playerDone && dealerShouldHit(dealerPicks, playerPicks, hardMode)) {
         setDealerPicks(prev => [...prev, drawCard([...playerPicks, ...prev])])
       } else {
+        const winner = outcome(playerPicks, dealerPicks)
         setPhase('over')
         setGamesPlayed(prev => prev + 1)
-        if (outcome(playerPicks, dealerPicks) === 'player') setPlayerWins(prev => prev + 1)
+        if (winner === 'player') setPlayerWins(prev => prev + 1)
+        // a bust already played the losing sound when it happened
+        if (handScore(playerPicks) <= 21) sfx[{ player: 'win', dealer: 'lose', draw: 'draw' }[winner]]()
       }
     }, 2000)
     return () => clearTimeout(id)
-  }, [phase, playerPicks, dealerPicks])
+  }, [phase, playerPicks, dealerPicks, hardMode])
 
   return (
     <div className='bg-[#2A5D40] min-h-screen  py-4 flex flex-col items-center justify-around '>
@@ -79,7 +106,26 @@ function App() {
         ))}
       </div>
 
-      {gamesPlayed > 0 && <p className='absolute top-2 left-2 bg-[#1c4a30] rounded-2xl px-3 py-0.5 font-mono font-bold text-amber-400 text-xs sm:text-sm'>winrate: { Math.floor((playerWins/gamesPlayed)*100)}%</p>}
+      {/* max-w keeps the pills clear of the deck in the top-right on narrow phones */}
+      <div className='absolute top-2 left-2 flex flex-wrap gap-2 max-w-[calc(100vw-7.5rem)] font-mono font-bold text-xs sm:text-sm'>
+        {gamesPlayed > 0 && <p className='bg-[#1c4a30] rounded-2xl px-3 py-0.5 text-amber-400'>winrate: { Math.floor((playerWins/gamesPlayed)*100)}%</p>}
+        {/* locked mid-hand so the mode can't be switched after seeing the cards */}
+        <button
+          onClick={() => { setHardMode(prev => !prev); sfx.click() }}
+          disabled={phase === 'player' || phase === 'dealer'}
+          aria-pressed={hardMode}
+          title='Hard mode: the dealer keeps drawing while behind you. Change between hands.'
+          className={`rounded-2xl px-3 py-0.5 disabled:opacity-50 disabled:cursor-not-allowed ${hardMode ? 'bg-red-700 text-white' : 'bg-[#1c4a30] text-amber-400'}`}>
+          hard mode: {hardMode ? 'on' : 'off'}
+        </button>
+        <button
+          // unmute before the click sound so turning sound on is audible
+          onClick={() => { setMuted(soundOn); setSoundOn(!soundOn); sfx.click() }}
+          aria-pressed={soundOn}
+          className='rounded-2xl px-3 py-0.5 bg-[#1c4a30] text-amber-400'>
+          sound: {soundOn ? 'on' : 'off'}
+        </button>
+      </div>
 
       {/* stacked (below xl): dealer on top, player at the bottom */}
       <div className='flex flex-col-reverse xl:flex-row xl:justify-center xl:gap-[10vw] xl:items-center xl:w-[70vw]'>
@@ -93,7 +139,8 @@ function App() {
           </div>
 
           <div
-            className={`flex justify-center relative h-30 sm:h-45 mb-8 ${playerScore > 21 ? 'animate-shake' : ''}`}
+            // z-10: cards flying to the player cross the dealer's hand and must pass over it
+            className={`flex justify-center relative z-10 h-30 sm:h-45 mb-8 ${playerScore > 21 ? 'animate-shake' : ''}`}
             style={{
               transform: `translateX(${- ((playerPicks.length + 1) * 25)}px)`
             }}>
@@ -105,7 +152,7 @@ function App() {
         </div>
 
 
-      {result && <p className={`${result === 'dealer' ? 'bg-red-700 text-white' : 'bg-amber-200 text-black'} font-extrabold text-center w-auto z-200 px-24 py-4 rounded-2xl max-w-[80vw] animate-banner self-center my-4 xl:my-0`}>{resultText[result]}</p>}
+      {result && <p className={`${resultStyle[result]} font-pixel font-bold text-2xl sm:text-3xl tracking-wide text-center w-auto z-200 px-10 sm:px-24 py-3 rounded-2xl shadow-[0_6px_0_rgba(0,0,0,0.35)] max-w-[80vw] animate-banner self-center my-4 xl:my-0`}>{resultText[result]}</p>}
 
 
 
@@ -130,9 +177,9 @@ function App() {
       </div>
 
 
-      <div className='flex w-3xs justify-evenly align-self-center'>
+      <div className='flex gap-4 justify-center'>
         {phase === 'idle' && (
-          <button onClick={startNewGame} className='px-4 py-2 rounded bg-green-700 text-white'>
+          <button onClick={startNewGame} className={`${button} bg-orange-600`}>
             Start Game
           </button>
         )}
@@ -140,12 +187,12 @@ function App() {
           <>
             <button
               onClick={hit}
-              className='px-4 py-2 rounded bg-black text-white'>
+              className={`${button} bg-blue-600`}>
               Hit Me
             </button>
             <button
-              onClick={() => setPhase('dealer')}
-              className='px-4 py-2 rounded bg-yellow-700 text-white'>
+              onClick={stand}
+              className={`${button} bg-red-600`}>
               Stand
             </button>
           </>
@@ -153,7 +200,7 @@ function App() {
         {phase === 'over' && (
           <button
             onClick={startNewGame}
-            className='px-4 py-2 rounded bg-black text-white'>
+            className={`${button} bg-orange-600`}>
             Play Again
           </button>
         )}

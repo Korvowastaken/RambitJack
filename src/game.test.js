@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { handScore, isBlackjack, outcome } from './game.js'
+import { handScore, isBlackjack, outcome, dealerShouldHit } from './game.js'
 
 // ace = 0, 2 = 1, 5 = 4, 9 = 8, 10 = 9, K = 12 (hearts); +13 per suit
 test('aces count as 11 only when it does not bust', () => {
@@ -14,6 +14,16 @@ test('aces count as 11 only when it does not bust', () => {
 test('blackjack is a two-card 21 only', () => {
   assert.ok(isBlackjack([0, 12]))
   assert.ok(!isBlackjack([9, 8, 13]))
+})
+
+test('dealer hits below 17; hard mode also hits while behind', () => {
+  const dealer17 = [9, 6] // 10 + 7
+  const player18 = [9, 7] // 10 + 8
+  assert.ok(dealerShouldHit([9, 5], player18)) // 16
+  assert.ok(!dealerShouldHit(dealer17, player18))
+  assert.ok(dealerShouldHit(dealer17, player18, true))
+  assert.ok(!dealerShouldHit([9, 7], player18, true)) // tie stands
+  assert.ok(!dealerShouldHit([9, 8], player18, true)) // ahead stands
 })
 
 test('outcome', () => {

@@ -1,5 +1,6 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import { deck } from "../data/deck";
+import { sfx } from "../sound";
 
 const suits = ['♥', '♦', '♠', '♣']
 
@@ -37,6 +38,7 @@ export default function Card({ pick = 0 , zIndex, hidden = false, dealDelay = 0 
     // fly out of the on-screen deck. Web Animations rather than CSS keyframes: a CSS
     // animation would start before this measurement and never see the offset
     useLayoutEffect(() => {
+        sfx.deal(dealDelay)
         const deckEl = document.getElementById('deck')
         if (!deckEl || matchMedia('(prefers-reduced-motion: reduce)').matches) return
         const d = deckEl.getBoundingClientRect()
